@@ -36,12 +36,14 @@ const taskTimeContainer = document.createElement("div");
 const taskName = elementProperty("input", "placeholder", "Enter task");
 const taskTime = elementProperty("input", "type", "time");
 addTaskBtn = elememtContentAndClassName("button", "+", "addBtn");
+const allTasksList = elememtClassName("div", "all-tasks-lists");
 clearAllBtn = elememtContentAndClassName(
     "button",
     "Clear Completed Tasks",
     "clear-all"
 );
-allTaskSection.append(allTasksTitle, clearAllBtn);
+
+allTaskSection.append(allTasksTitle, allTasksList, clearAllBtn);
 
 taskNameContainer.appendChild(taskName);
 taskTimeContainer.appendChild(taskTime);
@@ -50,10 +52,10 @@ form.append(h1, taskNameContainer, taskTimeContainer, addTaskBtn);
 addTaskSection.appendChild(form);
 
 // SPA
-document.addEventListener("DOMContentLoaded", () => {
-    allTaskSection.style.display = "none";
-    contactSection.style.display = "none";
-});
+// document.addEventListener("DOMContentLoaded", () => {
+//     allTaskSection.style.display = "none";
+//     contactSection.style.display = "none";
+// });
 
 navLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
@@ -77,10 +79,10 @@ function displayTasks(task, time) {
     const taskContainer = elememtClassName("div", "tasksList"),
         taskCheck = elementProperty("input", "type", "checkbox"),
         theTask = elememtClassName("p", "nameOfTask"),
-        at = elememtContentAndClassName("p", "@", "at"),
+        at = elememtContentAndClassName("p", "by", "at"),
         theTime = elememtClassName("p", "timeOfTask"),
         theCont = elememtClassName("p", "task-time-cont"),
-        editBtn = elememtContent("button", "Edit"),
+        editBtn = elememtContentAndClassName("button", "Edit", "editBtn"),
         deleteBtn = elememtContent("button", "Delete");
 
     deleteBtn.addEventListener("click", (e) => {
@@ -103,10 +105,16 @@ function displayTasks(task, time) {
     theTime.textContent = time;
     theCont.append(theTask, at, theTime);
     taskContainer.append(taskCheck, theCont, editBtn, deleteBtn);
-    allTaskSection.appendChild(taskContainer);
-
+    const existingTasks = allTaskSection.querySelectorAll(".tasksList");
+    if (existingTasks.length > 0) {
+        allTasksList.insertBefore(taskContainer, existingTasks[0]);
+    } else {
+        allTasksList.appendChild(taskContainer);
+    }
 
     taskCount.innerText++;
+    taskName.value = "";
+    taskTime.value = "";
 }
 
 addTaskBtn.addEventListener("click", (e) => {
@@ -114,8 +122,34 @@ addTaskBtn.addEventListener("click", (e) => {
     if (taskName.value && taskTime.value) {
         displayTasks(taskName.value, taskTime.value);
         updateLocalStorage();
-        taskName.value = "";
-        taskTime.value = "";
+    }
+});
+
+
+//Edit tasks
+allTasksList.addEventListener("click", (e) => {
+    if (e.target.className === "editBtn") {
+        const button = e.target;
+        const list = e.target.parentElement;
+        const taskTimeCont = list.querySelector(".task-time-cont");
+        const time=taskTimeCont.children[2].textContent
+        
+        if (button.textContent === "Edit") {
+            const task = taskTimeCont.firstElementChild;
+            const editTask = elementProperty("input", "type", "text");
+            editTask.value = task.textContent;
+            taskTimeCont.insertBefore(editTask, task);
+            button.textContent = "save";
+            task.remove();
+        } else if (button.textContent === "save") {
+            const editedTask = taskTimeCont.firstElementChild;
+            const savedTask = elememtContent("p", editedTask.value);
+            
+            taskTimeCont.insertBefore(savedTask, editedTask);
+
+            button.textContent = "Edit";
+            editedTask.remove();
+        }
     }
 });
 
@@ -132,10 +166,10 @@ function updateLocalStorage() {
 
 function loadFromLocalStorage() {
     const savedTasks = JSON.parse(localStorage.getItem("taskEntries")) || "[]";
-    // savedTasks.reverse()
-    savedTasks.forEach((task) => {
+    for (let i = savedTasks.length - 1; i >= 0; i--) {
+        const task = savedTasks[i];
         displayTasks(task.nameOfTask, task.timeOfTask);
-    });
+    }
 }
 
 loadFromLocalStorage();
