@@ -125,15 +125,14 @@ addTaskBtn.addEventListener("click", (e) => {
     }
 });
 
-
 //Edit tasks
 allTasksList.addEventListener("click", (e) => {
     if (e.target.className === "editBtn") {
         const button = e.target;
         const list = e.target.parentElement;
         const taskTimeCont = list.querySelector(".task-time-cont");
-        const time=taskTimeCont.children[2].textContent
-        
+        const time = taskTimeCont.children[2].textContent;
+
         if (button.textContent === "Edit") {
             const task = taskTimeCont.firstElementChild;
             const editTask = elementProperty("input", "type", "text");
@@ -143,12 +142,16 @@ allTasksList.addEventListener("click", (e) => {
             task.remove();
         } else if (button.textContent === "save") {
             const editedTask = taskTimeCont.firstElementChild;
-            const savedTask = elememtContent("p", editedTask.value);
-            
+            const savedTask = elememtContentAndClassName(
+                "p",
+                editedTask.value,
+                "nameOfTask"
+            );
             taskTimeCont.insertBefore(savedTask, editedTask);
 
             button.textContent = "Edit";
             editedTask.remove();
+            updateLocalStorage();
         }
     }
 });
@@ -163,6 +166,7 @@ function updateLocalStorage() {
     console.log(tasksToSave);
     localStorage.setItem("taskEntries", JSON.stringify(tasksToSave));
 }
+
 
 function loadFromLocalStorage() {
     const savedTasks = JSON.parse(localStorage.getItem("taskEntries")) || "[]";
