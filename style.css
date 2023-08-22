@@ -1,35 +1,74 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap");
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
+
+body {
+    background-color: #f4f4f4;
+    color: #333;
+    width: 100vw;
+    overflow-x: hidden;
+}
+
 .container {
     display: flex;
     flex-direction: column;
+    gap: 1rem;
     height: 100vh;
+    font-family: Quicksand, sans-serif;
 }
 
 header {
-    background-color: #eb8383;
     padding: 1rem;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    gap: 1.2rem;
+    width: 100vw;
+    box-shadow: 0 2px 1px rgb(24 22 22 / 10%);
 }
+
+h2 span {
+    color: #3498db;
+}
+
 nav {
     display: flex;
-    align-items: center;
-    gap: 1rem;
 }
 
 nav a {
-    color: #1d0101;
+    color: #333;
     text-decoration: none;
+    margin-right: 20px;
+    position: relative;
+    padding-bottom: 5px;
+    transition: color 0.3s;
     cursor: pointer;
 }
 
 nav a:hover {
-    color: rgba(29, 1, 1, 0.7);
+    color: #3498db;
+}
+
+nav a::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: #3498db;
+    bottom: 0;
+    left: 0;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.3s;
+}
+
+nav a:hover::after {
+    transform: scaleX(1);
 }
 
 nav :nth-child(2) {
@@ -41,10 +80,10 @@ nav :nth-child(2) span {
     top: -6px;
     right: -14px;
     font-size: 13px;
-    background-color: #1d0101;
+    background-color: #3498db;
     color: #fcf8f8;
-    width: 15px;
-    height: 15px;
+    width: 18px;
+    height: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -52,7 +91,12 @@ nav :nth-child(2) span {
 }
 
 main {
-    flex: 1;
+    max-width: 800px;
+    width: 70%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgb(0 0 0 / 10%);
 }
 
 section:nth-child(1) {
@@ -72,18 +116,17 @@ button {
 
 .addBtn {
     width: fit-content;
-    margin: auto;
-    padding: 1rem 2rem;
-    background-color: #aa4141;
-    outline: none;
+    padding: 0.5rem 1rem;
+    background-color: #3498db;
+    color: #fff;
     border: none;
     border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .addBtn:hover {
-    background-color: #fcf8f8;
-    color: #aa4141;
-    border: 1px solid green;
+    background-color: #2980b9;
 }
 
 form div,
@@ -91,24 +134,41 @@ h1 {
     margin-bottom: 0.5rem;
 }
 
-#addTask form input {
+#addTask form input:nth-child(1),
+#addTask form input[type="time"] {
     width: 100%;
-    padding: 0.4rem 0.5rem;
-    border: 1.5px #f2f2 outset;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
+}
+
+#addTask form input:nth-child(1):focus,
+#addTask form input[type="time"]:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 2px 8px rgb(52 152 219 / 30%);
 }
 
 .tasksList {
     padding: 0.5rem 1rem;
-    background-color: #aa4141;
+    background-color: #f2f2f2;
+    color: #3498db;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
     margin-bottom: 0.5rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
 }
 
 .tasksList:nth-child(odd) {
-    background-color: #fcf8f8;
+    background-color: #3498db;
+    color: #f2f2f2;
 }
 
 .task-time-cont {
@@ -126,45 +186,145 @@ h1 {
 }
 
 .notif-pop {
-    background-color: wheat;
-    width: fit-content;
+    position: absolute;
+    top: 30px;
+    z-index: 1;
+    width: 15rem;
+    text-rendering: optimizespeed;
+    background-color: #3498db;
     margin: 1rem auto;
-    padding: 2rem;
+    padding: 0.5rem;
     border-radius: 5px;
-    animation: bigUp linear infinite 4s;
+    color: #f2f2f2;
+    animation: slideIn linear infinite 7s;
     cursor: pointer;
 }
 
-.focused {
-    animation: bigUp linear infinite 4s;
-}
-
-@keyframes bigUp {
-    0% {
-        scale: 0.4;
-    }
+@keyframes blink {
+    0%,
     100% {
-        scale: 0.9;
+        border: 3px solid #e74c3c;
+    }
+
+    50% {
+        border: 3px solid transparent;
     }
 }
 
-header ~ input {
-    padding: 3rem;
-    width: 16rem;
-    margin: auto;
-    margin-top: 4rem;
+.focused {
+    animation: blink 1s infinite;
 }
 
-footer {
-    background-color: rgb(88, 11, 11);
-    color: #fcf8f8;
-    text-align: center;
-    padding: 1rem;
+@keyframes slideIn {
+    0% {
+        transform: translateX(350px);
+    }
+
+    100% {
+        transform: translateX(-200px);
+    }
 }
+
+.clear-all {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.clear-all:hover {
+    background-color: #c0392b;
+}
+
+.editBtn,
+.deleteBtn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.tasksList:nth-child(odd) .editBtn {
+    background-color: #f2f2f2;
+    color: #3498db;
+}
+
+.tasksList:nth-child(odd) .editBtn:hover {
+    background-color: #2980b9;
+    color: #f2f2f2;
+}
+
+.tasksList:nth-child(even) .editBtn {
+    background-color: #3498db;
+    color: #f2f2f2;
+}
+
+.tasksList:nth-child(even) .editBtn:hover {
+    background-color: #2980b9;
+}
+
+.deleteBtn {
+    background-color: #e74c3c;
+    color: white;
+    margin-left: 8px;
+}
+
+.deleteBtn:hover {
+    background-color: #2980b9;
+}
+
+#contact {
+    text-align: center;
+}
+
+.socials {
+    width: fit-content;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.socials span {
+    font-size: 24px;
+    color: #3498db;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.socials span:hover {
+    color: #e74c3c;
+}
+
+.socials span::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 2px;
+    background-color: #3498db;
+    transition: width 0.3s;
+}
+
+.socials span:hover::after {
+    width: 100%;
+}
+
 
 @media screen and (width > 768px) {
     .task-time-cont {
         flex-direction: row;
+
         /* flex-flow:row wrap; */
+    }
+
+    header {
+        flex-direction: row;
+        gap: 1.2rem;
     }
 }
