@@ -29,7 +29,7 @@ Special thanks to the following individuals:
 
 This project is a work of LM TechHub.
 For any questions or suggestions, feel free to contact me:
-- Email: your@email.com
+- Email: omomaighawosa440@gmail.com
 - GitHub: [Ig-Matrix](https://www.github.com/ig-matrix)
 - LinkedIn: [Ighawosa](https://www.linkedin.com/in/ighawosa-omoma-5070a721b)
 
