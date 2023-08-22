@@ -52,10 +52,10 @@ form.append(h1, taskNameContainer, taskTimeContainer, addTaskBtn);
 addTaskSection.appendChild(form);
 
 // SPA
-// document.addEventListener("DOMContentLoaded", () => {
-//     allTaskSection.style.display = "none";
-//     contactSection.style.display = "none";
-// });
+document.addEventListener("DOMContentLoaded", () => {
+    allTaskSection.style.display = "none";
+    contactSection.style.display = "none";
+});
 
 navLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
@@ -105,6 +105,7 @@ function displayTasks(task, time) {
     theTime.textContent = time;
     theCont.append(theTask, at, theTime);
     taskContainer.append(taskCheck, theCont, editBtn, deleteBtn);
+
     const existingTasks = allTaskSection.querySelectorAll(".tasksList");
     if (existingTasks.length > 0) {
         allTasksList.insertBefore(taskContainer, existingTasks[0]);
@@ -112,6 +113,7 @@ function displayTasks(task, time) {
         allTasksList.appendChild(taskContainer);
     }
 
+    displayPopUp(time);
     taskCount.innerText++;
     taskName.value = "";
     taskTime.value = "";
@@ -136,6 +138,7 @@ allTasksList.addEventListener("click", (e) => {
         if (button.textContent === "Edit") {
             const task = taskTimeCont.firstElementChild;
             const editTask = elementProperty("input", "type", "text");
+            editTask.classList.add("editInput");
             editTask.value = task.textContent;
             taskTimeCont.insertBefore(editTask, task);
             button.textContent = "save";
@@ -167,12 +170,52 @@ function updateLocalStorage() {
     localStorage.setItem("taskEntries", JSON.stringify(tasksToSave));
 }
 
-
 function loadFromLocalStorage() {
     const savedTasks = JSON.parse(localStorage.getItem("taskEntries")) || "[]";
     for (let i = savedTasks.length - 1; i >= 0; i--) {
         const task = savedTasks[i];
         displayTasks(task.nameOfTask, task.timeOfTask);
+    }
+}
+
+const notif = document.querySelector(".pop");
+function displayPopUp(time) {
+    const currentDate = new Date().toLocaleTimeString("en-US", {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+
+    const currentTime = new Date();
+    const userTimeParts = time.split(":");
+    const hrs = parseInt(userTimeParts[0]);
+    const mins = parseInt(userTimeParts[1]);
+    currentTime.setHours(hrs);
+    currentTime.setMinutes(mins);
+    const userTime = currentTime.toLocaleTimeString("en-US", {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+
+    if (userTime === currentDate) {
+        const popUpMessage = elememtContentAndClassName(
+            "p",
+            `Hey there, you have a task scheduled for ${userTime}.
+        Kindly check your task lists`,
+            "notif-pop"
+        );
+        notif.appendChild(popUpMessage);
+        console.log(userTime);
+        popUpMessage.addEventListener("click", () => {
+            allTaskSection.style.display = "block";
+            addTaskSection.style.display = "none";
+            contactSection.style.display = "none";
+            //add the class focused to the taskList element that the task time matches current time
+            const focusedTime = allTasksList.querySelector(".timeOfTask");
+            focusedTime.parentElement.parentElement.classList.add("focused");
+        });
+        setTimeout(() => (popUpMessage.style.visibility = "hidden"), 10000);
     }
 }
 
