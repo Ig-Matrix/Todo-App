@@ -204,6 +204,7 @@ label {
     color: #f2f2f2;
     animation: slideIn linear infinite 7s;
     cursor: pointer;
+    display: none;
 }
 
 @keyframes blink {

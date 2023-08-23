@@ -27,7 +27,6 @@ Special thanks to the following individuals:
 - Mr. Okechukwu Promise
 - Mr. Patrick
 
-This project is a work of LM TechHub.
 For any questions or suggestions, feel free to contact me:
 - Email: omomaighawosa440@gmail.com
 - GitHub: [Ig-Matrix](https://www.github.com/ig-matrix)
@@ -61,3 +60,5 @@ Contributions are welcome! If you'd like to contribute to this project, please f
 ## License
 This project is licensed under the [MIT License](LICENSE).
 
+
+## This project is a work of LM TechHub.

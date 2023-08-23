@@ -133,6 +133,7 @@ addTaskBtn.addEventListener("click", (e) => {
     if (taskName.value && taskTime.value) {
         displayTasks(taskName.value, taskTime.value);
         updateLocalStorage();
+        displayPopUp(taskTime.value);
     }
 });
 
@@ -182,6 +183,7 @@ function loadFromLocalStorage() {
     for (let i = savedTasks.length - 1; i >= 0; i--) {
         const task = savedTasks[i];
         displayTasks(task.nameOfTask, task.timeOfTask);
+        displayPopUp(task.timeOfTask);
     }
 }
 
@@ -206,13 +208,12 @@ function displayPopUp(time) {
     });
 
     if (userTime === currentDate) {
-        const popUpMessage = elememtContentAndClassName(
-            "p",
-            `Hey there, you have a task scheduled for ${userTime}.
-        Kindly check your task lists`,
-            "notif-pop"
-        );
+        const popUpMessage = notif.querySelector(".notif-pop");
+        popUpMessage.textContent = `Hey there, you have a task scheduled for ${userTime}. 
+        Kindly check your task lists`;
+        popUpMessage.style.display = "block";
         notif.appendChild(popUpMessage);
+
         popUpMessage.addEventListener("click", () => {
             allTaskSection.style.display = "block";
             addTaskSection.style.display = "none";
@@ -232,5 +233,21 @@ function removeFocusedClass() {
         focusedElement.classList.remove("focused");
     }
 }
+// Set an interval to periodically check for task times
+setInterval(() => {
+    const currentTime = new Date().toLocaleTimeString("en-US", {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+
+    const taskTimeElements = allTasksList.querySelectorAll(".timeOfTask");
+    taskTimeElements.forEach((taskTimeElement) => {
+        const taskTime = taskTimeElement.textContent;
+        if (taskTime === currentTime) {
+            displayPopUp(taskTime);
+        }
+    });
+}, 20000); // Check every minute
 
 loadFromLocalStorage();
