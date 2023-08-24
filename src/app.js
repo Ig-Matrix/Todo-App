@@ -62,6 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
     contactSection.style.display = "none";
 });
 
+//display sections based on what is clicked
 navLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
         if (e.target.className === "add") {
@@ -135,6 +136,7 @@ addTaskBtn.addEventListener("click", (e) => {
         updateLocalStorage();
         displayPopUp(taskTime.value);
     }
+    
 });
 
 // Edit tasks
@@ -188,9 +190,12 @@ function loadFromLocalStorage() {
 }
 
 const notif = document.querySelector(".pop");
+let hidePopUpTimeout;
+
 function displayPopUp(time) {
+    console.log(`Displaying pop-up for task at ${time}`);
     const currentDate = new Date().toLocaleTimeString("en-US", {
-        hour12: false,
+        hour12: true,
         hour: "2-digit",
         minute: "2-digit",
     });
@@ -202,7 +207,7 @@ function displayPopUp(time) {
     currentTime.setHours(hrs);
     currentTime.setMinutes(mins);
     const userTime = currentTime.toLocaleTimeString("en-US", {
-        hour12: false,
+        hour12: true,
         hour: "2-digit",
         minute: "2-digit",
     });
@@ -212,7 +217,6 @@ function displayPopUp(time) {
         popUpMessage.textContent = `Hey there, you have a task scheduled for ${userTime}. 
         Kindly check your task lists`;
         popUpMessage.style.display = "block";
-        notif.appendChild(popUpMessage);
 
         popUpMessage.addEventListener("click", () => {
             allTaskSection.style.display = "block";
@@ -222,7 +226,13 @@ function displayPopUp(time) {
             const focusedTime = allTasksList.querySelector(".timeOfTask");
             focusedTime.parentElement.parentElement.classList.add("focused");
         });
-        setTimeout(() => (popUpMessage.style.display = "none"), 10000);
+        clearTimeout(hidePopUpTimeout);
+
+        hidePopUpTimeout = setTimeout(() => {
+            popUpMessage.style.display = "none";
+        }, 60000);
+
+        setTimeout(() => (popUpMessage.style.display = "none"), 60000);
         setTimeout(() => removeFocusedClass(), 10000);
     }
 }
@@ -233,10 +243,11 @@ function removeFocusedClass() {
         focusedElement.classList.remove("focused");
     }
 }
+
 // Set an interval to periodically check for task times
 setInterval(() => {
     const currentTime = new Date().toLocaleTimeString("en-US", {
-        hour12: false,
+        hour12: true,
         hour: "2-digit",
         minute: "2-digit",
     });
@@ -244,10 +255,29 @@ setInterval(() => {
     const taskTimeElements = allTasksList.querySelectorAll(".timeOfTask");
     taskTimeElements.forEach((taskTimeElement) => {
         const taskTime = taskTimeElement.textContent;
-        if (taskTime === currentTime) {
+        if (isTaskTimeBeforeCurrentTime(taskTime, currentTime)) {
             displayPopUp(taskTime);
         }
     });
-}, 20000); // Check every minute
+}, 15000);
+
+function isTaskTimeBeforeCurrentTime(taskTime, currentTime) {
+    const taskTimeParts = taskTime.split(":");
+    const currentParts = currentTime.split(":");
+
+    const taskHours = parseInt(taskTimeParts[0]);
+    const taskMinutes = parseInt(taskTimeParts[1]);
+
+    const currentHours = parseInt(currentParts[0]);
+    const currentMinutes = parseInt(currentParts[1]);
+
+    if (taskHours < currentHours) {
+        return true;
+    } else if (taskHours === currentHours && taskMinutes <= currentMinutes) {
+        return true;
+    }
+
+    return false;
+}
 
 loadFromLocalStorage();
